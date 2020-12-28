@@ -6,10 +6,16 @@ variable "name" {
   description = "Name  (e.g. `app` or `cluster`)."
 }
 
-variable "application" {
+variable "repository" {
   type        = string
   default     = ""
-  description = "Application (e.g. `cd` or `clouddrove`)."
+  description = "Terraform current module repo"
+
+  validation {
+    # regex(...) fails if it cannot find a match
+    condition     = can(regex("^https://", var.repository))
+    error_message = "The module-repo value must be a valid Git repo link."
+  }
 }
 
 variable "environment" {
@@ -46,11 +52,13 @@ variable "enable_peering" {
 variable "requestor_vpc_id" {
   type        = string
   description = "Requestor VPC ID."
+  sensitive   = true
 }
 
 variable "acceptor_vpc_id" {
   type        = string
   description = "Acceptor VPC ID."
+  sensitive   = true
 }
 
 variable "acceptor_allow_remote_vpc_dns_resolution" {
@@ -69,9 +77,11 @@ variable "accepter_role_arn" {
   type        = string
   default     = ""
   description = "The Role ARN of accepter AWS account."
+  sensitive   = true
 }
 variable "profile_name" {
   type        = string
   default     = null
   description = "Name of aws profile."
+  sensitive   = true
 }
